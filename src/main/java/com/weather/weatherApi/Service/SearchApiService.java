@@ -5,30 +5,29 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @Service
-public class WeatherApiService {
+public class SearchApiService {
 
     private final WebClient.Builder client;
     private final String apiKey;
     private final String apiURL;
 
-
-    public WeatherApiService(WebClient.Builder client, @Value("${weatherApiKey}") String apiKey, @Value("${weatherApiURL}") String apiURL) {
+    public SearchApiService(WebClient.Builder client, @Value("${weatherApiKey}") String apiKey, @Value("${weatherApiURL}") String apiURL){
         this.client = client;
         this.apiKey = apiKey;
         this.apiURL = apiURL;
     }
 
-    public WebClient weatherApiWebService() {
+    public WebClient searchApiWebService(){
         return client
                 .baseUrl(apiURL)
                 .defaultHeader("key", apiKey)
                 .build();
     }
 
-    public String getCurrentWeather(String parameter) {
-        return weatherApiWebService().get()
+    public String getLocation(String parameter){
+        return searchApiWebService().get()
                 .uri(uriBuilder -> uriBuilder
-                        .path("/current.json")
+                        .path("/search.json")
                         .queryParam("q", parameter)
                         .build())
                 .retrieve()
@@ -36,8 +35,9 @@ public class WeatherApiService {
                 .block();
     }
 
-    public String testResponse() {
-        String coordinates = "-8.1213,-35.3120";
-        return getCurrentWeather(coordinates);
+    public String testResponse(){
+        String cityName = "Vitoria de Santo Antao";
+        return getLocation(cityName);
     }
+
 }
