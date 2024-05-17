@@ -1,5 +1,8 @@
 package com.weather.weatherApi.Service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.weather.weatherApi.Model.Location;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -17,14 +20,14 @@ public class SearchApiService {
         this.apiURL = apiURL;
     }
 
-    public WebClient searchApiWebService(){
+    private WebClient searchApiWebService(){
         return client
                 .baseUrl(apiURL)
                 .defaultHeader("key", apiKey)
                 .build();
     }
 
-    public String getLocation(String parameter){
+    private String getLocation(String parameter){
         return searchApiWebService().get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/search.json")
@@ -35,9 +38,10 @@ public class SearchApiService {
                 .block();
     }
 
-    public String testResponse(){
-        String cityName = "Vitoria de Santo Antao";
-        return getLocation(cityName);
+    public Location[] getLocations(String city) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        String location = getLocation(city);
+        return objectMapper.readValue(location, Location[].class);
     }
 
 }

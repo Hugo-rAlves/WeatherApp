@@ -1,5 +1,10 @@
 package com.weather.weatherApi.Service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.weather.weatherApi.Model.Location;
+import com.weather.weatherApi.Model.Weather;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -10,7 +15,6 @@ public class WeatherApiService {
     private final WebClient.Builder client;
     private final String apiKey;
     private final String apiURL;
-
 
     public WeatherApiService(WebClient.Builder client, @Value("${weatherApiKey}") String apiKey, @Value("${weatherApiURL}") String apiURL) {
         this.client = client;
@@ -36,8 +40,11 @@ public class WeatherApiService {
                 .block();
     }
 
-    public String testResponse() {
-        String coordinates = "-8.1213,-35.3120";
-        return getCurrentWeather(coordinates);
+    public String testResponse(Location location) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        String coordinates = location.getLat().toString() + "," + location.getLon().toString();
+        Weather weather = objectMapper.readValue(getCurrentWeather(coordinates), Weather.class);
+        weather.setCityLocation(location);
+        return weather.toString();
     }
 }

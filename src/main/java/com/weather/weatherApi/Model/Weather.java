@@ -1,5 +1,7 @@
 package com.weather.weatherApi.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -9,20 +11,14 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @ToString
 @EqualsAndHashCode
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Weather {
 
     private Location cityLocation;
-    private LocalDateTime localDateTime;
-    private LocalDateTime lastUpdatedTime;
-    private Double temperatureCelsius;
-    private Double temperatureFahrenheit;
-    private boolean isDay;
-    private String climateCondition;
-    private Double wind_mph;
-    private Double wind_kph;
-    private int humidity;
-    private Double feelsLikeCelsius;
-    private Double feelsLikeFahrenheit;
-    private Double uv;
+    @JsonProperty("current")
+    private CurrentWeather current;
+
 
 }
+
+
