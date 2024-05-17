@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.weather.weatherApi.Model.Location;
 import com.weather.weatherApi.Model.Weather;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -40,11 +39,11 @@ public class WeatherApiService {
                 .block();
     }
 
-    public String testResponse(Location location) throws JsonProcessingException {
+    public Weather getWeather(Location location) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         String coordinates = location.getLat().toString() + "," + location.getLon().toString();
         Weather weather = objectMapper.readValue(getCurrentWeather(coordinates), Weather.class);
         weather.setCityLocation(location);
-        return weather.toString();
+        return weather;
     }
 }
