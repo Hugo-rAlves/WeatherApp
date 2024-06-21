@@ -1,17 +1,25 @@
-FROM eclipse-temurin:17-jdk-focal
+FROM maven:3.8.5-openjdk-17 AS build
 
 WORKDIR /app
 
-COPY .mvn/ .mvn
-COPY mvnw pom.xml ./
+COPY pom.xml .
 
-RUN apt-get update && apt-get install -y dos2unix
-RUN dos2unix ./mvnw
+RUN mvn dependency:go-offline
 
-RUN ./mvnw dependency:go-offline
+COPY src/ ./src/
 
-COPY src ./src
+RUN mvn clean install
 
-RUN ./mvnw package
+FROM eclipse-temurin:17-jdk-alpine
 
-CMD ["java", "jar", "target/WeatherApp"]
+RUN mkdir /app
+
+COPY --from=build /app/target/*.jar /app/app.jar
+
+ENV SERVER_PORT=6060
+
+WORKDIR /app
+
+EXPOSE 6060
+
+ENTRYPOINT ["java","-jar","/app/app.jar"]
